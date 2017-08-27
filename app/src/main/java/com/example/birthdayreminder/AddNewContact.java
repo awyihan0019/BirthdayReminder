@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -42,13 +43,24 @@ public class AddNewContact extends AppCompatActivity {
                 String name = etName.getText().toString();
                 String email = etEmail.getText().toString();
                 String birthday = etBirthday.getText().toString();
-
-                ContactDbQueries dbq = new ContactDbQueries(new ContactDbHelper(getApplicationContext()));
-                Contact contact = new Contact(name, email, birthday);
-                if(dbq.insert(contact) != 0) {
-                    saved = true;
+                if(name.equals("")) {
+                    Snackbar.make(view, "You must enter name before you create!", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }else if(email.equals("")) {
+                    Snackbar.make(view, "You must enter email before you create!", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }else if(birthday.equals("")) {
+                    Snackbar.make(view, "You must enter birthday before you create!", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
-                finish();
+                else {
+                    ContactDbQueries dbq = new ContactDbQueries(new ContactDbHelper(getApplicationContext()));
+                    Contact contact = new Contact(name, email, birthday);
+                    if (dbq.insert(contact) != 0) {
+                        saved = true;
+                    }
+                    finish();
+                }
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
