@@ -84,8 +84,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Intent intent = new Intent(this, UpdateService.class);
-        startService(intent);
     }
     @Override
     public void onResume() {
@@ -106,26 +104,22 @@ public class MainActivity extends AppCompatActivity {
         String[] selectionArgsTomorrow= {"%"+ TomorrowDate +"%"};
         if(dbq.query(columns, selection, selectionArgsToday, null, null, ContactContract.ContactEntry.COLUMN_NAME_NAME + " ASC") != null)
         {
-            Cursor cursorToday = dbq.query(columns, selection, selectionArgsToday, null, null, ContactContract.ContactEntry.COLUMN_NAME_NAME + " ASC");
-            contactList_Today = cursorToday;
+            contactList_Today = dbq.query(columns, selection, selectionArgsToday, null, null, ContactContract.ContactEntry.COLUMN_NAME_NAME + " ASC");
             ContactCursorAdapter adapterToday = new ContactCursorAdapter(this, contactList_Today, 0);
             listView_today.setAdapter(adapterToday);
             setListViewHeight(listView_today);
-        }else ;//((ViewManager)listView_today.getParent()).removeView(listView_today)
+        }
 
         if (dbq.query(columns, selection, selectionArgsTomorrow, null, null, ContactContract.ContactEntry.COLUMN_NAME_NAME + " ASC") != null)
         {
-            Cursor cursorTomorrow = dbq.query(columns, selection, selectionArgsTomorrow, null, null, ContactContract.ContactEntry.COLUMN_NAME_NAME + " ASC");
-            contactList_Tomorrow = cursorTomorrow;
+            contactList_Tomorrow = dbq.query(columns, selection, selectionArgsTomorrow, null, null, ContactContract.ContactEntry.COLUMN_NAME_NAME + " ASC");
             ContactCursorAdapter adapterTomorrow = new ContactCursorAdapter(this, contactList_Tomorrow, 0);
 
             listView_tomorrow.setAdapter(adapterTomorrow);
             setListViewHeight(listView_tomorrow);
-        }else ;//((ViewManager)listView_tomorrow.getParent()).removeView(listView_tomorrow)
+        }
 
-        Cursor cursorDayAfter = dbq.query(columns, null, null, null, null, ContactContract.ContactEntry.COLUMN_NAME_NAME + " ASC");
-
-        contactList_DayAfter = cursorDayAfter;
+        contactList_DayAfter = dbq.query(columns, null, null, null, null, ContactContract.ContactEntry.COLUMN_NAME_NAME + " ASC");
         ContactCursorAdapter adapterDayAfter = new ContactCursorAdapter(this, contactList_DayAfter, 0);
 
         listView_dayAfter.setAdapter(adapterDayAfter);
