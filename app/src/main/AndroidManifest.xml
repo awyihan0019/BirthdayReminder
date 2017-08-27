@@ -46,7 +46,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.birthdayreminder.ViewContact" />
         </activity>
-
+        <activity
+            android:name=".Birthday_Today_Activity"
+            android:label="@string/title_activity_birthday__today_"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.birthdayreminder.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
