@@ -12,7 +12,7 @@ import android.support.v7.app.NotificationCompat;
  * Created by yihan on 27/8/2017.
  */
 
-class Notification_reciever extends BroadcastReceiver{
+public class Notification_receiver extends BroadcastReceiver{
 
     public Context context;
 
@@ -61,8 +61,7 @@ class Notification_reciever extends BroadcastReceiver{
         String selection = ContactContract.ContactEntry.COLUMN_NAME_BIRTHDAY + " like ?";
         String[] selectionArgsToday = {"%"+ TodayDate +"%" };
         Cursor cursor = dbq.query(columns, selection, selectionArgsToday, null, null, ContactContract.ContactEntry.COLUMN_NAME_NAME + " ASC");
-        int todayBirthday = cursor.getCount();
 
-        return todayBirthday;
+        return cursor.getCount();
     }
 }

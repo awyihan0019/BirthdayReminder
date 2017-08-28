@@ -18,4 +18,5 @@
     <string name="birthday_day_after">All Birthday Day</string>
     <string name="title_activity_birthday__today_">Birthday_Today_Activity</string>
     <string name="back_up_birthday">Back Up Birthday</string>
+    <string name="network_unavailable">Network Not Available Now!</string>
 </resources>

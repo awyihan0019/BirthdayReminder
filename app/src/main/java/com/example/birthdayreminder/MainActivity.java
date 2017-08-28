@@ -2,25 +2,24 @@ package com.example.birthdayreminder;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.icu.text.SimpleDateFormat;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
-import android.view.ViewManager;
 import android.widget.AdapterView;
-import android.widget.CursorAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import java.text.DateFormat;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     protected static Cursor contactList_Today;
     protected static Cursor contactList_Tomorrow;
     protected static Cursor contactList_DayAfter;
+    protected static ContactDbQueries dbq;
     private ListView listView_today;
     private ListView listView_tomorrow;
     private ListView listView_dayAfter;
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        ContactDbQueries dbq = new ContactDbQueries(new ContactDbHelper(getApplicationContext()));
+        dbq = new ContactDbQueries(new ContactDbHelper(getApplicationContext()));
 
         String[] columns = {
                 ContactContract.ContactEntry._ID,
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
 
-        Intent intent = new Intent(getApplicationContext(), Notification_reciever.class);
+        Intent intent = new Intent(getApplicationContext(), Notification_receiver.class);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -173,6 +173,26 @@ public class MainActivity extends AppCompatActivity {
         listView.setLayoutParams(params);
     }
 
+    public void backUpContact()
+    {
+        ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected()) {
+            //etName = (EditText)MainActivity.this.findViewById(R.id.name);
+            //etEmail = (EditText)MainActivity.this.findViewById(R.id.email);
+            //etPhone = (EditText)MainActivity.this.findViewById(R.id.phone);
+
+            new PostJsonTask(MainActivity.this).execute();
+
+            Toast toast = Toast.makeText(MainActivity.this, "Backup Successful", Toast.LENGTH_LONG);
+            toast.show();
+        }
+        else {
+            Toast toast = Toast.makeText(MainActivity.this, getResources().getString(R.string.network_unavailable), Toast.LENGTH_LONG);
+            toast.show();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -190,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         switch(id) {
             case R.id.backup_birthday:
-
+                backUpContact();
                 return true;
         }
 
