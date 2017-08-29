@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     protected static Cursor contactList_Tomorrow;
     protected static Cursor contactList_DayAfter;
     protected static ContactDbQueries dbq;
+    protected String response ;
     private ListView listView_today;
     private ListView listView_tomorrow;
     private ListView listView_dayAfter;
@@ -178,13 +179,9 @@ public class MainActivity extends AppCompatActivity {
         ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if(networkInfo != null && networkInfo.isConnected()) {
-            //etName = (EditText)MainActivity.this.findViewById(R.id.name);
-            //etEmail = (EditText)MainActivity.this.findViewById(R.id.email);
-            //etPhone = (EditText)MainActivity.this.findViewById(R.id.phone);
 
             new PostJsonTask(MainActivity.this).execute();
-
-            Toast toast = Toast.makeText(MainActivity.this, "Backup Successful", Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(MainActivity.this, "Backup Successful " + response, Toast.LENGTH_LONG);
             toast.show();
         }
         else {

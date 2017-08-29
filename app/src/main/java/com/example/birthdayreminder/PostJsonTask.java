@@ -3,7 +3,6 @@ package com.example.birthdayreminder;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,7 +24,7 @@ import java.util.Iterator;
  * Created by yihan on 27/8/2017.
  */
 
-public class PostJsonTask extends AsyncTask<Void, Void, JSONArray> {
+public class PostJsonTask extends AsyncTask<Void, Void, JSONObject> {
 
     private static final String JSON_URL = "http://labs.jamesooi.com/uecs3253-asg.php";
 
@@ -36,8 +35,8 @@ public class PostJsonTask extends AsyncTask<Void, Void, JSONArray> {
     }
 
     @Override
-    protected JSONArray doInBackground(Void... params) {
-        JSONArray response = null;
+    protected JSONObject doInBackground(Void... params) {
+        JSONObject response = null;
         try {
             response = postJson();
         }
@@ -47,8 +46,16 @@ public class PostJsonTask extends AsyncTask<Void, Void, JSONArray> {
 
         return response;
     }
-
-    private JSONArray postJson() throws IOException {
+    @Override
+    protected void onPostExecute(JSONObject response) {
+        try {
+            Log.d("RECORDS_SYNCED", Integer.toString(response.getInt("recordsSynced")));
+        }
+        catch (Exception ex) {
+            Log.e("JSON_EXCEPTION", ex.toString());
+        }
+    }
+    private JSONObject postJson() throws IOException {
         InputStream is = null;
         OutputStream os;
         String[] columns = {
@@ -69,7 +76,7 @@ public class PostJsonTask extends AsyncTask<Void, Void, JSONArray> {
                 try {
                     jsonObject.put("id",id);
                     jsonObject.put("name",name);
-                    jsonObject.put("birthDate",birthday);
+                    jsonObject.put("birthday",birthday);
                     jsonObject.put("email",email);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -81,10 +88,6 @@ public class PostJsonTask extends AsyncTask<Void, Void, JSONArray> {
         cursor.close();
 
         try {
-            //JSONArray postData = new JSONArray();
-            //postData.put("name", activity.etName.getText().toString());
-            //postData.put("email", activity.etEmail.getText().toString());
-            //postData.put("phone", activity.etPhone.getText().toString());
 
             URL url = new URL(JSON_URL);
 
@@ -98,13 +101,7 @@ public class PostJsonTask extends AsyncTask<Void, Void, JSONArray> {
             // Starts the query
             os = conn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            //String[] posData = getPostDataString(contactData);
-            String posData = getPostDataString(contactData);
-            //for (int i = 0; i < posData.length; i++) {
-            //    writer.write(posData[i]);
-            //}
-            //String posData = contactData.toString();
-            writer.write(posData);
+            writer.write(getPostDataString(contactData));
             writer.flush();
             writer.close();
             os.close();
@@ -133,7 +130,7 @@ public class PostJsonTask extends AsyncTask<Void, Void, JSONArray> {
         }
     }
 
-    public JSONArray readInputStream(InputStream is)
+    public JSONObject readInputStream(InputStream is)
             throws IOException, JSONException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
         StringBuilder builder = new StringBuilder();
@@ -142,40 +139,17 @@ public class PostJsonTask extends AsyncTask<Void, Void, JSONArray> {
         while ((input = reader.readLine()) != null)
             builder.append(input);
 
-        return new JSONArray(builder.toString());
+        return new JSONObject(builder.toString());
     }
 
     private String getPostDataString(JSONArray data) throws Exception {
 
-        StringBuilder [] result = new StringBuilder[data.length()];
-        StringBuilder totalResult = new StringBuilder();
-        boolean first = true;
+        StringBuilder result = new StringBuilder();
 
-        for (int i = 0 ; i < data.length(); i ++) {
-            StringBuilder subResult = new StringBuilder();
-            Iterator<String> itr = data.getJSONObject(i).keys();
+        result.append(URLEncoder.encode("data", "UTF-8"));
+        result.append("=");
+        result.append(URLEncoder.encode(data.toString(), "UTF-8"));
 
-            while (itr.hasNext()) {
-
-                String key = itr.next();
-                Object value = data.getJSONObject(i).get(key);
-
-                if (first)
-                    first = false;
-                else
-                    subResult.append("&");
-
-                subResult.append(URLEncoder.encode(key, "UTF-8"));
-                subResult.append("=");
-                subResult.append(URLEncoder.encode(value.toString(), "UTF-8"));
-            }
-            result[i] = subResult;
-            totalResult.append(subResult);
-        }
-        String[] resultInString = new String[result.length];
-        for (int i = 0; i < result.length; i++) {
-            resultInString[i] = result[i].toString();
-        }
-        return totalResult.toString();//resultInString;
+        return result.toString();
     }
 }

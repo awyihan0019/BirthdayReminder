@@ -36,16 +36,6 @@ public class Notification_receiver extends BroadcastReceiver{
 
             notificationManager.notify(100, builder.build());
         }
-        else {
-            NotificationCompat.Builder builder = (NotificationCompat.Builder) new NotificationCompat.Builder(context)
-                    .setContentIntent(pendingIntent)
-                    .setSmallIcon(R.drawable.bithday_cake_icon)
-                    .setContentTitle("Birthday Remainder")
-                    .setContentText("You have no friend are birthday today.")
-                    .setAutoCancel(true);
-
-            notificationManager.notify(100, builder.build());
-        }
     }
 
     public int getNumberBirthdayToday(){
